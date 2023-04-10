@@ -1,8 +1,8 @@
 /**
- * @implements {GoogleAnalyticsService}
+ * @implements {GoogleAnalyticsLoader}
  * @memberof module:GoogleAnalytics
  */
-class GoogleAnalyticsService {
+class GoogleAnalyticsLoader {
   constructor({ config }) {
     this.analyticsId = config.GOOGLE_ANALYTICS_4_ID;
 

@@ -158,6 +158,9 @@ export async function runtimeConfig() {
   }
 }
 
+export async function loadExternalScripts (a: [], {config}) => {a.forEach(a => a.loadScript())}
+
+
 /**
  * The default handler for the initialization lifecycle's `analytics` phase.
  *
@@ -241,9 +244,9 @@ function applyOverrideHandlers(overrides) {
 export async function initialize({
   loggingService = NewRelicLoggingService,
   analyticsService = SegmentAnalyticsService,
-  googleAnalyticsService = GoogleAnalyticsService,
   authService = AxiosJwtAuthService,
   authMiddleware = [],
+  externalScripts = [GoogleAnalyticsLoader],
   requireAuthenticatedUser: requireUser = false,
   hydrateAuthenticatedUser: hydrateUser = false,
   messages,
@@ -259,6 +262,10 @@ export async function initialize({
     await handlers.config();
     await runtimeConfig();
     publish(APP_CONFIG_INITIALIZED);
+
+    loadExternalScripts(externalScripts, {
+      config: getConfig(),
+    });
 
     // Logging
     configureLogging(loggingService, {
@@ -282,10 +289,6 @@ export async function initialize({
       config: getConfig(),
       loggingService: getLoggingService(),
       httpClient: getAuthenticatedHttpClient(),
-    });
-
-    configureGoogleAnalytics(googleAnalyticsService, {
-      config: getConfig(),
     });
 
     await handlers.analytics();
