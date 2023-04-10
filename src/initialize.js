@@ -158,12 +158,11 @@ export async function runtimeConfig() {
   }
 }
 
-export async function loadExternalScripts (externalScripts, data) {
-  debugger;
-  externalScripts.forEach(externalScript => {
-    const script = new externalScript(data);
+export async function loadExternalScripts(externalScripts, data) {
+  externalScripts.forEach(ExternalScript => {
+    const script = new ExternalScript(data);
     script.loadScript();
-  })
+  });
 }
 
 /**
