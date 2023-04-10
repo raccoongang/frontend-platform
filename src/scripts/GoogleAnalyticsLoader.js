@@ -5,13 +5,13 @@
 class GoogleAnalyticsLoader {
   constructor({ config }) {
     this.analyticsId = config.GOOGLE_ANALYTICS_4_ID;
-
-    if (this.analyticsId) {
-      this.initializeService();
-    }
   }
 
-  initializeService() {
+  loadScript() {
+    if (!this.analyticsId) {
+      return;
+    }
+
     global.googleAnalytics = global.googleAnalytics || [];
     const { googleAnalytics } = global;
 
@@ -50,4 +50,4 @@ class GoogleAnalyticsLoader {
   }
 }
 
-export default GoogleAnalyticsService;
+export default GoogleAnalyticsLoader;

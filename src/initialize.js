@@ -59,7 +59,7 @@ import {
 import {
   configure as configureAnalytics, SegmentAnalyticsService, identifyAnonymousUser, identifyAuthenticatedUser,
 } from './analytics';
-import { configureGoogleAnalytics, GoogleAnalyticsService } from './google-analytics';
+import { GoogleAnalyticsLoader } from './scripts';
 import {
   getAuthenticatedHttpClient,
   configure as configureAuth,
@@ -158,8 +158,13 @@ export async function runtimeConfig() {
   }
 }
 
-export async function loadExternalScripts (a: [], {config}) => {a.forEach(a => a.loadScript())}
-
+export async function loadExternalScripts (externalScripts, data) {
+  debugger;
+  externalScripts.forEach(externalScript => {
+    const script = new externalScript(data);
+    script.loadScript();
+  })
+}
 
 /**
  * The default handler for the initialization lifecycle's `analytics` phase.
