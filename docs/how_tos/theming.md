@@ -1,10 +1,10 @@
 # Theming support with `@openedx/paragon` and `@openedx/brand-openedx`
 
 > [!IMPORTANT]  
-> This document describes theming with design tokens. 
+> This document describes theming with design tokens.
 > Information on theming MFEs that do not yet have design tokens support:
 > * https://github.com/openedx/brand-openedx
-> Information on the design tokens project:
+    > Information on the design tokens project:
 > * https://github.com/openedx/paragon/blob/master/docs/decisions/0019-scaling-styles-with-design-tokens.rst
 > * https://github.com/openedx/paragon/tree/alpha?tab=readme-ov-file#design-tokens
 
@@ -49,7 +49,7 @@ If any of the configured external `PARAGON_THEME_URLS` fail to load for whatever
 ### Basic theme URL configuration
 
 Paragon theme loader supports 3 mechanisms for configuring the Paragon theme urls:
-* Environment Variables stringified JSON useful to preload the theme during the build time. 
+* Environment Variables stringified JSON useful to preload the theme during the build time.
 * JavaScript-based configuration via `env.config.js` (only runtime config).
 * MFE runtime configuration API via `edx-platform` (only runtime config).
 

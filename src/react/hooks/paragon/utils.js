@@ -13,12 +13,12 @@ export const removeExistingLinks = (existingLinks) => {
 };
 
 /**
-* Finds the default theme variant from the given theme variants object. If no default theme exists, the first theme
-* variant is returned as a fallback.
-* @param {Object.<string, ParagonThemeVariant>|undefined} themeVariants
-*
-* @returns {ParagonThemeVariant|undefined} The default theme variant.
-*/
+ * Finds the default theme variant from the given theme variants object. If no default theme exists, the first theme
+ * variant is returned as a fallback.
+ * @param {Object.<string, ParagonThemeVariant>|undefined} themeVariants
+ *
+ * @returns {ParagonThemeVariant|undefined} The default theme variant.
+ */
 export const getDefaultThemeVariant = ({ themeVariants, themeVariantDefaults = {} }) => {
   if (!themeVariants) {
     return undefined;
@@ -82,10 +82,10 @@ export const getDefaultThemeVariant = ({ themeVariants, themeVariantDefaults = {
 };
 
 /**
-* Creates the fallback URL for the given theme file.
-* @param {string} url The theme file path.
-* @returns {string} The default theme url.
-*/
+ * Creates the fallback URL for the given theme file.
+ * @param {string} url The theme file path.
+ * @returns {string} The default theme url.
+ */
 export const fallbackThemeUrl = (url) => {
   const baseUrl = getConfig().BASE_URL || window.location?.origin;
   return `${baseUrl}${basename}${url}`;

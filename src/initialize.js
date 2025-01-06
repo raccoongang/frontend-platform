@@ -140,7 +140,7 @@ export async function initError(error) {
  */
 export async function auth(requireUser, hydrateUser) {
   if (requireUser) {
-    await ensureAuthenticatedUser(globalThis.location.href);
+    await ensureAuthenticatedUser(global.location.href);
   } else {
     await fetchAuthenticatedUser();
   }
@@ -223,7 +223,7 @@ export async function analytics() {
 }
 
 function applyOverrideHandlers(overrides) {
-  const noOp = async () => { };
+  const noOp = async () => {};
   return {
     pubSub: noOp,
     config: noOp,
@@ -343,7 +343,6 @@ export async function initialize({
       config: getConfig(),
       middleware: authMiddleware,
     });
-
     await handlers.auth(requireUser, hydrateUser);
     publish(APP_AUTH_INITIALIZED);
 
