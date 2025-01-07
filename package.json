@@ -2,7 +2,7 @@
   "name": "@edx/frontend-platform",
   "version": "7.1.2",
   "description": "Foundational application framework for Open edX micro-frontend applications.",
-  "main": "dist/index.js",
+  "main": "index.js",
   "publishConfig": {
     "access": "public"
   },
