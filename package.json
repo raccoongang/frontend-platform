@@ -6,9 +6,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "files": [
-    "/dist"
-  ],
   "sideEffects": false,
   "scripts": {
     "build": "make build",
@@ -19,8 +16,12 @@
     "snapshot": "fedx-scripts jest --updateSnapshot",
     "start": "fedx-scripts webpack-dev-server --progress",
     "test": "fedx-scripts jest --coverage",
-    "test:watch": "npm run test -- --watch"
+    "test:watch": "npm run test -- --watch",
+    "postinstall": "cp -rv dist/* ."
   },
+  "files": [
+    "dist"
+  ],
   "bin": {
     "intl-imports.js": "i18n/scripts/intl-imports.js",
     "transifex-utils.js": "i18n/scripts/transifex-utils.js"
