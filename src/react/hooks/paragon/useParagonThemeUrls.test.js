@@ -97,41 +97,5 @@ describe('useParagonThemeUrls', () => {
         }),
       );
     });
-    it('returns expected object when core default and variants are not present, fallback to PARAGON_THEME', () => {
-      const config = {
-        PARAGON_THEME_URLS: {
-          core: {
-            urls: {
-              brandOverride: 'brand-core.css',
-            },
-          },
-          defaults: {
-            light: 'light',
-          },
-          variants: {},
-        },
-      };
-      const { result } = renderHook(() => useParagonThemeUrls(config));
-      expect(result.current).toEqual(
-        expect.objectContaining({
-          core: {
-            urls: {
-              default: 'localhost:8080/core.min.css',
-              brandOverride: 'brand-core.css',
-            },
-          },
-          defaults: {
-            light: 'light',
-          },
-          variants: {
-            light: {
-              urls: {
-                default: 'localhost:8080/light.min.css',
-              },
-            },
-          },
-        }),
-      );
-    });
   });
 });

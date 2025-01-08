@@ -15,8 +15,8 @@ import { subscribe, unsubscribe } from '../../pubSub';
 var useAppEvent = function useAppEvent(type, callback) {
   useEffect(function () {
     var subscriptionToken = subscribe(type, callback);
-    return function () {
-      return unsubscribe(subscriptionToken);
+    return function cleanup() {
+      unsubscribe(subscriptionToken);
     };
   }, [callback, type]);
 };

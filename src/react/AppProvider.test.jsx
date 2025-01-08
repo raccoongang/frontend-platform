@@ -1,9 +1,11 @@
 import React from 'react';
 import { createStore } from 'redux';
+import { mount } from 'enzyme';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
+import { BrowserRouter as Router } from 'react-router-dom';
 import AppProvider from './AppProvider';
 import { initialize } from '../initialize';
 import { useAppEvent, useTrackColorSchemeChoice, useParagonTheme } from './hooks';
@@ -32,7 +34,6 @@ jest.mock('../config', () => ({
     REFRESH_ACCESS_TOKEN_ENDPOINT: 'localhost:18000/oauth2/access_token',
     ACCESS_TOKEN_COOKIE_NAME: 'access_token',
     CSRF_TOKEN_API_PATH: 'localhost:18000/csrf',
-    PUBLIC_PATH: '/',
   }),
 }));
 
@@ -56,12 +57,6 @@ jest.mock('./hooks', () => ({
     jest.fn(),
   ]),
 }));
-
-Object.defineProperty(window, 'localStorage', {
-  value: {
-    setItem: jest.fn(),
-  },
-});
 
 describe('AppProvider', () => {
   beforeEach(async () => {
@@ -93,74 +88,78 @@ describe('AppProvider', () => {
   it('should render its children with a router', () => {
     const component = (
       <AppProvider store={createStore(state => state)}>
-        <div className="child">Child One</div>
-        <div className="child">Child Two</div>
+        <div>Child One</div>
+        <div>Child Two</div>
       </AppProvider>
     );
 
-    const wrapper = render(component);
-    const list = wrapper.container.querySelectorAll('div.child');
-
-    expect(wrapper.getByTestId('browser-router')).toBeInTheDocument();
+    const wrapper = mount(component);
+    const list = wrapper.find('div');
+    expect(wrapper.find(Router).length).toEqual(1);
     expect(list.length).toEqual(2);
-    expect(list[0].textContent).toEqual('Child One');
-    expect(list[1].textContent).toEqual('Child Two');
+    expect(list.at(0).text()).toEqual('Child One');
+    expect(list.at(1).text()).toEqual('Child Two');
 
-    const reduxProvider = wrapper.getByTestId('redux-provider');
-    expect(reduxProvider).toBeInTheDocument();
+    const reduxProvider = wrapper.find('Provider');
+    expect(reduxProvider.length).toEqual(1);
   });
 
   it('should render its children without a router', () => {
     const component = (
       <AppProvider store={createStore(state => state)} wrapWithRouter={false}>
-        <div className="child">Child One</div>
-        <div className="child">Child Two</div>
+        <div>Child One</div>
+        <div>Child Two</div>
       </AppProvider>
     );
 
-    const wrapper = render(component);
-    const list = wrapper.container.querySelectorAll('div.child');
-    expect(wrapper.queryByTestId('browser-router')).not.toBeInTheDocument();
+    const wrapper = mount(component);
+    const list = wrapper.find('div');
+    expect(wrapper.find(Router).length).toEqual(0);
     expect(list.length).toEqual(2);
-    expect(list[0].textContent).toEqual('Child One');
-    expect(list[1].textContent).toEqual('Child Two');
+    expect(list.at(0).text()).toEqual('Child One');
+    expect(list.at(1).text()).toEqual('Child Two');
 
-    const reduxProvider = wrapper.getByTestId('redux-provider');
-    expect(reduxProvider).toBeInTheDocument();
+    const reduxProvider = wrapper.find('Provider');
+    expect(reduxProvider.length).toEqual(1);
   });
 
   it('should skip redux Provider if not given a store', () => {
     const component = (
-      <AppProvider>
-        <div className="child">Child One</div>
-        <div className="child">Child Two</div>
-      </AppProvider>
-    );
-
-    const wrapper = render(component);
-    const list = wrapper.container.querySelectorAll('div.child');
-    expect(list.length).toEqual(2);
-    expect(list[0].textContent).toEqual('Child One');
-    expect(list[1].textContent).toEqual('Child Two');
-
-    const reduxProvider = wrapper.queryByTestId('redux-provider');
-    expect(reduxProvider).not.toBeInTheDocument();
-  });
-
-  describe('paragon theme and brand', () => {
-    let Component = (
       <AppProvider>
         <div>Child One</div>
         <div>Child Two</div>
       </AppProvider>
     );
 
+    const wrapper = mount(component);
+    const list = wrapper.find('div');
+    expect(list.length).toEqual(2);
+    expect(list.at(0).text()).toEqual('Child One');
+    expect(list.at(1).text()).toEqual('Child Two');
+
+    const reduxProvider = wrapper.find('Provider');
+    expect(reduxProvider.length).toEqual(0);
+  });
+
+  describe('paragon theme and brand', () => {
     it('calls trackColorSchemeChoice', () => {
+      const Component = (
+        <AppProvider>
+          <div>Child One</div>
+          <div>Child Two</div>
+        </AppProvider>
+      );
       render(Component);
       expect(useTrackColorSchemeChoice).toHaveBeenCalled();
     });
 
     it('calls useParagonTheme', () => {
+      const Component = (
+        <AppProvider>
+          <div>Child One</div>
+          <div>Child Two</div>
+        </AppProvider>
+      );
       render(Component);
       expect(useParagonTheme).toHaveBeenCalled();
       expect(useParagonTheme).toHaveBeenCalledWith(
@@ -181,6 +180,12 @@ describe('AppProvider', () => {
         { isThemeLoaded: false },
         jest.fn(),
       ]);
+      const Component = (
+        <AppProvider>
+          <div>Child One</div>
+          <div>Child Two</div>
+        </AppProvider>
+      );
       const { container } = render(Component);
       expect(container).toBeEmptyDOMElement();
     });
@@ -191,7 +196,7 @@ describe('AppProvider', () => {
         { isThemeLoaded: true, themeVariant: 'light' },
         mockUseParagonThemeDispatch,
       ]);
-      Component = (
+      const Component = (
         <AppProvider>
           <AppContext.Consumer>
             {({ paragonTheme }) => (
@@ -230,12 +235,12 @@ describe('AppProvider', () => {
   });
 
   describe('useAppEvent', () => {
-    const Component = (
-      <AppProvider>
-        <div>Child</div>
-      </AppProvider>
-    );
     it('subscribes to `AUTHENTICATED_USER_CHANGED`', async () => {
+      const Component = (
+        <AppProvider>
+          <div>Child</div>
+        </AppProvider>
+      );
       render(Component);
       expect(useAppEvent).toHaveBeenCalledWith(AUTHENTICATED_USER_CHANGED, expect.any(Function));
       const useAppEventMockCalls = useAppEvent.mock.calls;
@@ -247,6 +252,11 @@ describe('AppProvider', () => {
     });
 
     it('subscribes to `CONFIG_CHANGED`', async () => {
+      const Component = (
+        <AppProvider>
+          <div>Child</div>
+        </AppProvider>
+      );
       render(Component);
       expect(useAppEvent).toHaveBeenCalledWith(CONFIG_CHANGED, expect.any(Function));
       const useAppEventMockCalls = useAppEvent.mock.calls;
@@ -258,6 +268,11 @@ describe('AppProvider', () => {
     });
 
     it('subscribes to `LOCALE_CHANGED`', async () => {
+      const Component = (
+        <AppProvider>
+          <div>Child</div>
+        </AppProvider>
+      );
       render(Component);
       expect(useAppEvent).toHaveBeenCalledWith(LOCALE_CHANGED, expect.any(Function));
       const useAppEventMockCalls = useAppEvent.mock.calls;

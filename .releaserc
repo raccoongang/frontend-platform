@@ -1,8 +1,5 @@
 {
-  "branches": [
-    "master",
-    {name: "alpha", prerelease: true}
-  ],
+  "branch": "master",
   "tagFormat": "v${version}",
   "verifyConditions": [
     {

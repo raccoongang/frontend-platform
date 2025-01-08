@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
-
 import { logError, logInfo } from '../../../logging';
-
-import { fallbackThemeUrl, removeExistingLinks } from './utils';
+import { removeExistingLinks } from './utils';
+import { getConfig } from '../../../config';
 
 /**
  * Adds/updates a `<link>` element in the HTML document to load each theme variant's CSS, setting the
@@ -129,7 +128,7 @@ const useParagonThemeVariants = ({
           const paragonThemeAccessor = isBrandOverride ? 'brand' : 'paragon';
           const themeUrls = PARAGON_THEME?.[paragonThemeAccessor]?.themeUrls ?? {};
           if (themeUrls.variants && themeUrls.variants[themeVariant]) {
-            const themeVariantFallbackUrl = fallbackThemeUrl(themeUrls.variants[themeVariant].fileName);
+            const themeVariantFallbackUrl = `${getConfig().BASE_URL}/${themeUrls.variants[themeVariant].fileName}`;
             logInfo(`Falling back to locally installed theme variant (${themeVariant}) CSS: ${themeVariantFallbackUrl}`);
             themeVariantLink = createThemeVariantLink(themeVariantFallbackUrl, {
               isFallbackThemeUrl: true,
@@ -161,15 +160,12 @@ const useParagonThemeVariants = ({
         return themeVariantLink;
       };
 
-      const insertBrandThemeVariantLink = () => {
-        const updatedStylesheetRel = generateStylesheetRelAttr(themeVariant);
-
-        if (existingThemeVariantBrandLink) {
-          existingThemeVariantBrandLink.rel = updatedStylesheetRel;
-          existingThemeVariantBrandLink.removeAttribute('as');
-          existingThemeVariantBrandLink.dataset.brandThemeVariant = themeVariant;
-          return;
-        }
+      if (!existingThemeVariantLink) {
+        const paragonThemeVariantLink = createThemeVariantLink(value.urls.default);
+        document.head.insertAdjacentElement(
+          'afterbegin',
+          paragonThemeVariantLink,
+        );
 
         if (value.urls.brandOverride) {
           const brandThemeVariantLink = createThemeVariantLink(value.urls.brandOverride, { isBrandOverride: true });
@@ -185,26 +181,20 @@ const useParagonThemeVariants = ({
               brandThemeVariantLink,
             );
           }
+        } else {
+          setIsBrandThemeVariantLoaded(true);
         }
-        setIsBrandThemeVariantLoaded(true);
-      };
-
-      if (!existingThemeVariantLink) {
-        const paragonThemeVariantLink = createThemeVariantLink(value.urls.default);
-        document.head.insertAdjacentElement(
-          'afterbegin',
-          paragonThemeVariantLink,
-        );
-        insertBrandThemeVariantLink(existingThemeVariantBrandLink);
       } else {
         const updatedStylesheetRel = generateStylesheetRelAttr(themeVariant);
         existingThemeVariantLink.rel = updatedStylesheetRel;
         existingThemeVariantLink.removeAttribute('as');
-        existingThemeVariantLink.dataset.paragonThemeVariant = themeVariant;
-        insertBrandThemeVariantLink(existingThemeVariantBrandLink);
+        if (existingThemeVariantBrandLink) {
+          existingThemeVariantBrandLink.rel = updatedStylesheetRel;
+          existingThemeVariantBrandLink.removeAttribute('as');
+        }
+        setIsParagonThemeVariantLoaded(true);
+        setIsBrandThemeVariantLoaded(true);
       }
-      setIsParagonThemeVariantLoaded(true);
-      setIsBrandThemeVariantLoaded(true);
     });
   }, [themeVariants, currentThemeVariant, onLoad]);
 };

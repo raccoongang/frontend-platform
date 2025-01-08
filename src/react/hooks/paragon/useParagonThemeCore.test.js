@@ -1,30 +1,26 @@
 import { renderHook, act } from '@testing-library/react-hooks';
-
 import { getConfig } from '../../../config';
 import { logError } from '../../../logging';
-
 import useParagonThemeCore from './useParagonThemeCore';
 
 jest.mock('../../../logging');
 
 describe('useParagonThemeCore', () => {
   const themeOnLoad = jest.fn();
-  let coreConfig;
 
-  beforeEach(() => {
+  afterEach(() => {
     document.head.innerHTML = '';
-    coreConfig = {
-      themeCore: {
-        urls: {
-          default: 'https://cdn.jsdelivr.net/npm/@edx/paragon@$21.0.0/dist/core.min.css',
-        },
-      },
-      onLoad: themeOnLoad,
-    };
     jest.clearAllMocks();
   });
 
   it('should load the core url and change the loading state to true', () => {
+    const coreConfig = {
+      themeCore: {
+        urls: { default: 'https://cdn.jsdelivr.net/npm/@edx/paragon@$21.0.0/dist/core.min.css' },
+      },
+      onLoad: themeOnLoad,
+    };
+
     renderHook(() => useParagonThemeCore(coreConfig));
     const createdLinkTag = document.head.querySelector('link');
     act(() => createdLinkTag.onload());
@@ -33,7 +29,15 @@ describe('useParagonThemeCore', () => {
   });
 
   it('should load the core default and brand url and change the loading state to true', () => {
-    coreConfig.themeCore.urls.brandOverride = 'https://cdn.jsdelivr.net/npm/@edx/brand@$2.0.0Version/dist/core.min.css';
+    const coreConfig = {
+      themeCore: {
+        urls: {
+          default: 'https://cdn.jsdelivr.net/npm/@edx/paragon@$21.0.0/dist/core.min.css',
+          brandOverride: 'https://cdn.jsdelivr.net/npm/@edx/brand@$2.0.0/dist/core.min.css',
+        },
+      },
+      onLoad: themeOnLoad,
+    };
 
     renderHook(() => useParagonThemeCore(coreConfig));
     const createdLinkTag = document.head.querySelector('link[data-paragon-theme-core="true"]');
@@ -46,6 +50,33 @@ describe('useParagonThemeCore', () => {
   });
 
   it('should dispatch a log error and fallback to PARAGON_THEME if can not load the core theme link', () => {
+    global.PARAGON_THEME = {
+      paragon: {
+        version: '1.0.0',
+        themeUrls: {
+          core: {
+            fileName: 'core.min.css',
+          },
+          defaults: {
+            light: 'light',
+          },
+          variants: {
+            light: {
+              fileName: 'light.min.css',
+            },
+          },
+        },
+      },
+    };
+    const coreConfig = {
+      themeCore: {
+        urls: {
+          default: 'https://cdn.jsdelivr.net/npm/@edx/paragon@$21.0.0/dist/core.min.css',
+        },
+      },
+      onLoad: themeOnLoad,
+    };
+
     renderHook(() => useParagonThemeCore(coreConfig));
     const createdLinkTag = document.head.querySelector('link[data-paragon-theme-core="true"]');
 
@@ -55,18 +86,8 @@ describe('useParagonThemeCore', () => {
     expect(document.querySelector('link').href).toBe(`${getConfig().BASE_URL}/${PARAGON_THEME.paragon.themeUrls.core.fileName}`);
   });
 
-  it('should not create a new link if the core theme is already loaded', () => {
-    document.head.innerHTML = '<link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/@edx/paragon@$21.0.0/dist/core.min.css" onerror="this.remove();">';
-
-    renderHook(() => useParagonThemeCore(coreConfig));
-    const themeCoreLinks = document.head.querySelectorAll('link');
-    expect(themeCoreLinks.length).toBe(1);
-    expect(themeCoreLinks[0].rel).toContain('stylesheet');
-    expect(themeCoreLinks[0]).not.toHaveAttribute('as', 'style');
-  });
-
   it('should not create any core link if can not find themeCore urls definition', () => {
-    coreConfig = {
+    const coreConfig = {
       themeCore: {
         default: 'https://cdn.jsdelivr.net/npm/@edx/paragon@$21.0.0/dist/core.min.css',
       },

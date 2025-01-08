@@ -17,7 +17,9 @@ const useAppEvent = (type, callback) => {
   useEffect(() => {
     const subscriptionToken = subscribe(type, callback);
 
-    return () => unsubscribe(subscriptionToken);
+    return function cleanup() {
+      unsubscribe(subscriptionToken);
+    };
   }, [callback, type]);
 };
 

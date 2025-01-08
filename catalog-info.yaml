@@ -14,8 +14,8 @@ metadata:
       title: "Documentation"
       icon: "Article"
   annotations:
-    openedx.org/arch-interest-groups: ""
+    openedx.org/arch-interest-groups: "jmbowman"
 spec:
-  owner: "group:committers-frontend"
+  owner: 
   type: 'library'
   lifecycle: 'production'

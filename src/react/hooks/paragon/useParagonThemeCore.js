@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 
 import { logError, logInfo } from '../../../logging';
-import { fallbackThemeUrl, removeExistingLinks } from './utils';
+import { removeExistingLinks } from './utils';
+import { getConfig } from '../../../config';
 
 /**
  * Adds/updates a `<link>` element in the HTML document to load the core application theme CSS.
@@ -79,14 +80,14 @@ const useParagonThemeCore = ({
           const paragonThemeAccessor = isBrandOverride ? 'brand' : 'paragon';
           const themeUrls = PARAGON_THEME?.[paragonThemeAccessor]?.themeUrls ?? {};
           if (themeUrls.core) {
-            const coreThemeFallbackUrl = fallbackThemeUrl(themeUrls.core.fileName);
+            const coreThemeFallbackUrl = `${getConfig().BASE_URL}/${themeUrls.core.fileName}`;
             logInfo(`Falling back to locally installed core theme CSS: ${coreThemeFallbackUrl}`);
             coreThemeLink = createCoreThemeLink(coreThemeFallbackUrl, { isFallbackThemeUrl: true, isBrandOverride });
             const otherExistingLinks = getExistingCoreThemeLinks(isBrandOverride);
             removeExistingLinks(otherExistingLinks);
-            const foundParagonThemeCoreLink = getParagonThemeCoreLink();
-            if (foundParagonThemeCoreLink) {
-              foundParagonThemeCoreLink.insertAdjacentElement(
+            const foundParagonThemCoreLink = getParagonThemeCoreLink();
+            if (foundParagonThemCoreLink) {
+              foundParagonThemCoreLink.insertAdjacentElement(
                 'afterend',
                 coreThemeLink,
               );
@@ -129,11 +130,9 @@ const useParagonThemeCore = ({
     } else {
       existingCoreThemeLink.rel = 'stylesheet';
       existingCoreThemeLink.removeAttribute('as');
-      existingCoreThemeLink.dataset.paragonThemeCore = true;
       if (brandCoreLink) {
         brandCoreLink.rel = 'stylesheet';
         brandCoreLink.removeAttribute('as');
-        brandCoreLink.dataset.brandThemeCore = true;
       }
       setIsParagonThemeCoreLoaded(true);
       setIsBrandThemeCoreLoaded(true);

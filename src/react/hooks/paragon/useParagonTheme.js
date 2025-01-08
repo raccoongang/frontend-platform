@@ -1,14 +1,12 @@
 import {
   useCallback, useEffect, useReducer, useState,
 } from 'react';
-
+import useParagonThemeUrls from './useParagonThemeUrls';
+import { getDefaultThemeVariant } from './utils';
+import { paragonThemeActions, paragonThemeReducer } from '../../reducers';
+import useParagonThemeCore from './useParagonThemeCore';
 import { SELECTED_THEME_VARIANT_KEY } from '../../constants';
 import { logError } from '../../../logging';
-import { paragonThemeActions, paragonThemeReducer } from '../../reducers';
-import { getDefaultThemeVariant, isEmptyObject } from './utils';
-
-import useParagonThemeCore from './useParagonThemeCore';
-import useParagonThemeUrls from './useParagonThemeUrls';
 import useParagonThemeVariants from './useParagonThemeVariants';
 
 /**
@@ -61,9 +59,9 @@ const useParagonTheme = (config) => {
       return;
     }
 
-    if (prefersDarkMode && themeVariantDefaults?.dark) {
+    if (prefersDarkMode && themeVariantDefaults.dark) {
       dispatch(paragonThemeActions.setParagonThemeVariant(themeVariantDefaults.dark));
-    } else if (!prefersDarkMode && themeVariantDefaults?.light) {
+    } else if (!prefersDarkMode && themeVariantDefaults.light) {
       dispatch(paragonThemeActions.setParagonThemeVariant(themeVariantDefaults.light));
     } else {
       logError(`Could not set theme variant based on system preference (prefers dark mode: ${prefersDarkMode})`, themeVariantDefaults, themeVariants);
@@ -84,7 +82,7 @@ const useParagonTheme = (config) => {
       return;
     }
 
-    const hasThemeConfig = (themeCore?.urls && !isEmptyObject(themeVariants));
+    const hasThemeConfig = (themeCore?.urls && Object.keys(themeVariants).length > 0);
     if (!hasThemeConfig) {
       // no theme URLs to load, set loading to false.
       dispatch(paragonThemeActions.setParagonThemeLoaded(true));
