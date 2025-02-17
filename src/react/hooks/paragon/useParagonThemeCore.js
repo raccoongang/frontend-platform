@@ -64,6 +64,7 @@ const useParagonThemeCore = ({
           }
         };
         coreThemeLink.onerror = () => {
+          window.PARAGON_THEME = window.PARAGON_THEME || {};
           logError(`Failed to load core theme CSS from ${url}`);
           if (isFallbackThemeUrl) {
             logError(`Could not load core theme CSS from ${url} or fallback URL. Aborting.`);

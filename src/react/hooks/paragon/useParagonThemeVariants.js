@@ -114,6 +114,7 @@ const useParagonThemeVariants = ({
         };
 
         themeVariantLink.onerror = () => {
+          window.PARAGON_THEME = window.PARAGON_THEME || {};
           logError(`Failed to load theme variant (${themeVariant}) CSS from ${value.urls.default}`);
           if (isFallbackThemeUrl) {
             logError(`Could not load theme variant (${themeVariant}) CSS from fallback URL. Aborting.`);
