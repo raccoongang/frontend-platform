@@ -9,6 +9,8 @@ import { fallbackThemeUrl, handleVersionSubstitution, isEmptyObject } from './ut
  * @returns {ParagonThemeUrls|undefined} An object containing the URLs for the theme's core CSS and any theme variants.
  */
 const useParagonThemeUrls = (config) => useMemo(() => {
+  window.PARAGON_THEME = window.PARAGON_THEME || {};
+
   if (!config?.PARAGON_THEME_URLS) {
     return undefined;
   }
@@ -56,28 +58,32 @@ const useParagonThemeUrls = (config) => useMemo(() => {
 
   // If we don't have  the core default or any theme variants, use the PARAGON_THEME
   if (!coreCss.default || isEmptyObject(themeVariantsCss)) {
-    const localCoreUrl = PARAGON_THEME.paragon?.themeUrls?.core;
-    const localThemeVariants = PARAGON_THEME.paragon?.themeUrls?.variants;
+    if (isEmptyObject(PARAGON_THEME)) {
+      const localCoreUrl = PARAGON_THEME?.paragon?.themeUrls?.core || {};
+      const localThemeVariants = PARAGON_THEME?.paragon?.themeUrls?.variants || {};
 
-    if (isEmptyObject(localCoreUrl) || isEmptyObject(localThemeVariants)) {
-      return undefined;
-    }
-    if (!coreCss.default) {
-      coreCss.default = fallbackThemeUrl(localCoreUrl?.fileName);
-    }
+      if (isEmptyObject(localCoreUrl) || isEmptyObject(localThemeVariants)) {
+        return undefined;
+      }
 
-    if (isEmptyObject(themeVariantsCss)) {
-      Object.entries(localThemeVariants).forEach(([themeVariant, { fileName, ...rest }]) => {
-        themeVariantsCss[themeVariant] = {
-          urls: { default: fallbackThemeUrl(fileName), ...rest.urls },
-        };
-      });
+      if (!coreCss.default) {
+        coreCss.default = fallbackThemeUrl(localCoreUrl?.fileName);
+      }
+
+      if (isEmptyObject(themeVariantsCss)) {
+        Object.entries(localThemeVariants).forEach(([themeVariant, { fileName, ...rest }]) => {
+          themeVariantsCss[themeVariant] = {
+            urls: { default: fallbackThemeUrl(fileName), ...rest.urls },
+          };
+        });
+      }
+
+      return {
+        core: { urls: coreCss },
+        defaults: defaultThemeVariants,
+        variants: themeVariantsCss,
+      };
     }
-    return {
-      core: { urls: coreCss },
-      defaults: defaultThemeVariants,
-      variants: themeVariantsCss,
-    };
   }
 
   return {

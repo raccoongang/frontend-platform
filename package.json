@@ -1,6 +1,6 @@
 {
   "name": "@raccoongang/frontend-platform",
-  "version": "7.1.2-tokens.2",
+  "version": "7.1.2-tokens.3",
   "description": "Foundational application framework for Open edX micro-frontend applications.",
   "main": "index.js",
   "publishConfig": {
