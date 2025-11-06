@@ -42,6 +42,7 @@ const supportedLocales = [
   'fa', // Farsi
   'fa-ir', // Farsi, Iran
   'fr', // French
+  'fr-ca', // French(CA)
   'zh-cn', // Chinese, Simplified
   'ca', // Catalan
   'he', // Hebrew
