@@ -2,13 +2,23 @@
   "name": "@edx/frontend-platform",
   "version": "7.1.4",
   "description": "Foundational application framework for Open edX micro-frontend applications.",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "exports": {
+    ".": "./dist/index.js",
+    "./i18n": "./dist/i18n/index.js",
+    "./react": "./dist/react/index.js",
+    "./auth": "./dist/auth/index.js",
+    "./analytics": "./dist/analytics/index.js",
+    "./logging": "./dist/logging/index.js",
+    "./testing": "./dist/testing/index.js"
+  },
   "publishConfig": {
     "access": "public"
   },
   "sideEffects": false,
   "scripts": {
     "build": "make build",
+    "prepare": "make build",
     "docs": "jsdoc -c jsdoc.json",
     "docs-watch": "nodemon -w src -w docs/template -w README.md -e js,jsx --exec npm run docs",
     "lint": "fedx-scripts eslint --ext .js --ext .jsx .",
@@ -19,8 +29,8 @@
     "test:watch": "npm run test -- --watch"
   },
   "bin": {
-    "intl-imports.js": "src/i18n/scripts/intl-imports.js",
-    "transifex-utils.js": "src/i18n/scripts/transifex-utils.js"
+    "intl-imports.js": "dist/i18n/scripts/intl-imports.js",
+    "transifex-utils.js": "dist/i18n/scripts/transifex-utils.js"
   },
   "repository": {
     "type": "git",
