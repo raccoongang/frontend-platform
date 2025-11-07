@@ -16,7 +16,7 @@ build:
 	@# --copy-files will bring in everything else that wasn't processed by babel. Remove what we don't want.
 	@find dist -name '*.test.js*' -delete
 	rm ./dist/setupTest.js
-	cp ./package.json ./dist/package.json
+	node -e "const fs=require('fs'); const pkg=JSON.parse(fs.readFileSync('./package.json')); pkg.main='index.js'; pkg.exports={'.':'./index.js','./i18n':'./i18n/index.js','./react':'./react/index.js','./auth':'./auth/index.js','./analytics':'./analytics/index.js','./logging':'./logging/index.js','./testing':'./testing/index.js'}; pkg.bin={'intl-imports.js':'i18n/scripts/intl-imports.js','transifex-utils.js':'i18n/scripts/transifex-utils.js'}; delete pkg.scripts.prepare; fs.writeFileSync('./dist/package.json',JSON.stringify(pkg,null,2));"
 	cp ./LICENSE ./dist/LICENSE
 	cp ./README.md ./dist/README.md
 
