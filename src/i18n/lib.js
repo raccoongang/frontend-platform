@@ -211,6 +211,7 @@ const messagesShape = {
   en: PropTypes.objectOf(PropTypes.string),
   'es-419': PropTypes.objectOf(PropTypes.string), // Spanish, Latin American
   fr: PropTypes.objectOf(PropTypes.string), // French
+  'fr-ca': PropTypes.objectOf(PropTypes.string), // French Canadian
   'zh-cn': PropTypes.objectOf(PropTypes.string), // Chinese, Simplified
   ca: PropTypes.objectOf(PropTypes.string), // Catalan
   he: PropTypes.objectOf(PropTypes.string), // Hebrew
