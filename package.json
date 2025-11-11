@@ -5,12 +5,18 @@
   "main": "dist/index.js",
   "exports": {
     ".": "./dist/index.js",
-    "./i18n": "./dist/i18n/index.js",
-    "./react": "./dist/react/index.js",
-    "./auth": "./dist/auth/index.js",
     "./analytics": "./dist/analytics/index.js",
+    "./auth": "./dist/auth/index.js",
+    "./i18n": "./dist/i18n/index.js",
     "./logging": "./dist/logging/index.js",
-    "./testing": "./dist/testing/index.js"
+    "./react": "./dist/react/index.js",
+    "./scripts": "./dist/scripts/index.js",
+    "./testing": "./dist/testing/index.js",
+    "./config": "./dist/config.js",
+    "./constants": "./dist/constants.js",
+    "./initialize": "./dist/initialize.js",
+    "./pubSub": "./dist/pubSub.js",
+    "./utils": "./dist/utils.js"
   },
   "publishConfig": {
     "access": "public"
