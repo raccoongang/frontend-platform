@@ -158,7 +158,7 @@ export function findSupportedLocale(locale) {
   if (messages[getPrimaryLanguageSubtag(locale)] !== undefined) {
     return getPrimaryLanguageSubtag(locale);
   }
-  return 'en';
+  return 'uk';
 }
 
 /**

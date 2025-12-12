@@ -142,7 +142,7 @@ export function findSupportedLocale(locale) {
     return getPrimaryLanguageSubtag(locale);
   }
 
-  return 'en';
+  return 'uk';
 }
 
 /**
