@@ -1,0 +1,1 @@
+{"version":3,"file":"index.js","names":["default","DjangoMessagesRenderer"],"sources":["../../../src/react/django-messages/index.jsx"],"sourcesContent":["export { default as DjangoMessagesRenderer } from './DjangoMessagesRenderer';\n"],"mappings":"AAAA,SAASA,OAAO,IAAIC,sBAAsB,QAAQ,0BAA0B","ignoreList":[]}
