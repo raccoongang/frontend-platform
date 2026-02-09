@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 
 import messages from './PhoneNumberField.messages';
 
-export const UA_PHONE_MASK = '+38\0 (00) 000-00-00';
+export const UA_PHONE_MASK = '+38\\0 (00) 000-00-00';
 
 function PhoneNumberField({
   value,

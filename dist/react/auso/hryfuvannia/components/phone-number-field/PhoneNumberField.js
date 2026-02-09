@@ -9,7 +9,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { Form } from '@openedx/paragon';
 import PropTypes from 'prop-types';
 import messages from './PhoneNumberField.messages';
-export var UA_PHONE_MASK = '+38\0 (00) 000-00-00';
+export var UA_PHONE_MASK = '+38\\0 (00) 000-00-00';
 function PhoneNumberField(_ref) {
   var value = _ref.value,
     fieldErrors = _ref.fieldErrors,
