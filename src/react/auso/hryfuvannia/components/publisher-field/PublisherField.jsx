@@ -1,31 +1,28 @@
+import React, { memo, useRef, useState } from 'react';
+
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Form } from '@openedx/paragon';
 import { useQuery } from '@tanstack/react-query';
 import debounce from 'lodash.debounce';
 import PropTypes from 'prop-types';
-import { memo, useRef, useState } from 'react';
 import { components } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 
-import { getPublishersOptions } from '../../data/queries';
+import { getPublishersOptions } from './data/queries';
 import messages from './PublisherField.messages';
 
 const MIN_INPUT_LENGTH = 3;
 const MAX_INPUT_LENGTH = 240;
 
-const MaxLengthInput = (props) => {
+function MaxLengthInput(props) {
   return <components.Input {...props} maxLength={MAX_INPUT_LENGTH} />;
-};
+}
 
 const SELECT_COMPONENTS = { Input: MaxLengthInput };
 
-const PublisherField = ({
-  value,
-  setFormFields,
-  fieldErrors,
-  onChange,
-  onBlur,
-}) => {
+function PublisherField({
+  value, fieldErrors, onChange, onBlur,
+}) {
   const { formatMessage } = useIntl();
   const [searchText, setSearchText] = useState('');
 
@@ -37,7 +34,7 @@ const PublisherField = ({
   });
 
   const handleSearchDebounced = useRef(
-    debounce((searchText) => setSearchText(searchText), 300),
+    debounce((text) => setSearchText(text), 300),
   ).current;
 
   const handleInputChange = (inputText) => {
@@ -45,18 +42,27 @@ const PublisherField = ({
   };
 
   const handleChange = (selectedOption, actionMeta) => {
-    const formattedValue = selectedOption
-      ? actionMeta.action === 'create-option'
+    let formattedValue = null;
+    if (selectedOption) {
+      formattedValue = actionMeta.action === 'create-option'
         ? `${selectedOption.value} ${formatMessage(messages.newSuffix)}`
-        : selectedOption.value
-      : null;
-    const value = actionMeta.action === 'clear' ? null : { value: formattedValue, label: selectedOption?.value || null };
+        : selectedOption.value;
+    }
+    const newValue = actionMeta.action === 'clear'
+      ? null
+      : { value: formattedValue, label: selectedOption?.value || null };
 
-    onChange(value);
+    onChange(newValue);
   };
 
-  const isValidNewOption = (inputValue, value, options) => {
-    if (options.find((option) => option.label.localeCompare(inputValue, undefined, { sensitivity: 'accent' }) === 0)) {
+  const isValidNewOption = (inputValue, newValue, options) => {
+    if (
+      options.find(
+        (option) => option.label.localeCompare(inputValue, undefined, {
+          sensitivity: 'accent',
+        }) === 0,
+      )
+    ) {
       return false;
     }
     return inputValue.length >= MIN_INPUT_LENGTH;
@@ -64,14 +70,13 @@ const PublisherField = ({
 
   const formatCreateLabel = (inputValue) => inputValue;
 
-  const formatOptionLabel = ({ label, __isNew__ }) =>
-    __isNew__ ? (
-      <span>
-        <strong>{formatMessage(messages.labelNewPrefix)}</strong> {label}
-      </span>
-    ) : (
-      label
-    );
+  const formatOptionLabel = ({ label, __isNew__ }) => (__isNew__ ? (
+    <span>
+      <strong>{formatMessage(messages.labelNewPrefix)}</strong> {label}
+    </span>
+  ) : (
+    label
+  ));
 
   const getLoadingOrPromptMessage = ({ inputValue }) => {
     if (inputValue.length < MIN_INPUT_LENGTH) {
@@ -82,7 +87,7 @@ const PublisherField = ({
   };
 
   return (
-    <Form.Group isInvalid={!!fieldErrors.publisherName}>
+    <Form.Group isInvalid={!!fieldErrors.publisher_name}>
       <Form.Label>{formatMessage(messages.labelPublisher)}</Form.Label>
       <CreatableSelect
         placeholder=""
@@ -106,18 +111,18 @@ const PublisherField = ({
         components={SELECT_COMPONENTS}
         isClearable
       />
-      {fieldErrors.publisherName && (
+      {fieldErrors.publisher_name && (
         <Form.Control.Feedback
           type="invalid"
           className="form-text-size"
           hasIcon={false}
         >
-          {fieldErrors.publisherName}
+          {fieldErrors.publisher_name}
         </Form.Control.Feedback>
       )}
     </Form.Group>
   );
-};
+}
 
 PublisherField.propTypes = {
   value: PropTypes.shape({
@@ -125,16 +130,14 @@ PublisherField.propTypes = {
     label: PropTypes.string,
   }).isRequired,
   fieldErrors: PropTypes.shape({
-    publisherName: PropTypes.string,
+    publisher_name: PropTypes.string,
   }).isRequired,
   onChange: PropTypes.func,
   onBlur: PropTypes.func,
-  onClick: PropTypes.func,
 };
 
 PublisherField.defaultProps = {
   onBlur: () => null,
-  onClick: () => null,
-}
+};
 
 export default memo(PublisherField);

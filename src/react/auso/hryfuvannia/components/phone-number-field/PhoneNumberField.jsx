@@ -1,65 +1,66 @@
+import React, { memo, useCallback, useState } from 'react';
+
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Form } from '@openedx/paragon';
 import PropTypes from 'prop-types';
-import { memo, useCallback, useState } from 'react';
 
 import messages from './PhoneNumberField.messages';
 
-export const UA_PHONE_MASK = "+38\0 (00) 000-00-00";
+export const UA_PHONE_MASK = '+38\0 (00) 000-00-00';
 
-const PhoneNumberField = ({
+function PhoneNumberField({
   value,
   fieldErrors,
   mask,
   onChange,
   onBlur,
   onClick,
-}) => {
+}) {
   const { formatMessage } = useIntl();
   const [unmasked, setUnmasked] = useState(null);
 
-  const handleMaskValue = useCallback((value) => {
-    setUnmasked(value);
-    onChange(value);
-  });
+  const handleMaskValue = useCallback((maskValue) => {
+    setUnmasked(maskValue);
+    onChange(maskValue);
+  }, [onChange]);
 
   const handleOnBlur = () => {
     onBlur(unmasked);
   };
 
   return (
-    <Form.Group isInvalid={!!fieldErrors.phoneNumber}>
+    <Form.Group isInvalid={!!fieldErrors.phone_number}>
       <Form.Label>{formatMessage(messages.labelPhoneNumber)}</Form.Label>
       <Form.Control
         name="phone_number"
         value={value}
-        aria-invalid={!!fieldErrors.phoneNumber}
+        aria-invalid={!!fieldErrors.phone_number}
         inputMask={mask}
         unmask
         lazy={false}
-        placeholderChar={'_'}
+        placeholderChar="_"
         onAccept={handleMaskValue}
         onBlur={handleOnBlur}
         onClick={onClick}
       />
-      {fieldErrors.phoneNumber && (
+      {fieldErrors.phone_number && (
         <Form.Control.Feedback
           id="phone-number-error"
           type="invalid"
           className="form-text-size"
           hasIcon={false}
         >
-          {fieldErrors.phoneNumber}
+          {fieldErrors.phone_number}
         </Form.Control.Feedback>
       )}
     </Form.Group>
   );
-};
+}
 
 PhoneNumberField.propTypes = {
   value: PropTypes.string.isRequired,
   fieldErrors: PropTypes.shape({
-    phoneNumber: PropTypes.string,
+    phone_number: PropTypes.string,
   }).isRequired,
   onChange: PropTypes.func.isRequired,
   onBlur: PropTypes.func,
