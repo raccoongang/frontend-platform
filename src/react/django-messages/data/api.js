@@ -1,7 +1,7 @@
 import { camelCaseObject, ensureConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
-import { buildLmsUrl } from '../utils';
+import { buildLmsUrl } from '../../utils';
 
 ensureConfig(['LMS_BASE_URL'], 'Teacher Dashboard MFE');
 
