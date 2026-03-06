@@ -153,24 +153,41 @@ export function findSupportedLocale(locale) {
  * @memberof module:Internationalization
  */
 export function getLocale(locale) {
+  console.log('[i18n] getLocale called');
+
   if (messages === null) {
+    console.error('[i18n] Error: messages is null. i18n not configured!');
     throw new Error('getLocale called before configuring i18n. Call configure with messages first.');
   }
-  // 1. Explicit application request
+
   if (locale !== undefined) {
-    return findSupportedLocale(locale);
+    const supported = findSupportedLocale(locale);
+    console.log(`[i18n] 1. Explicit locale provided: "${locale}". Found supported: "${supported}"`);
+    return supported;
   }
-  // 2. User setting in cookie
-  const cookieLangPref = cookies
-    .get(config.LANGUAGE_PREFERENCE_COOKIE_NAME);
+
+  const cookieName = config.LANGUAGE_PREFERENCE_COOKIE_NAME;
+  console.log(`[i18n] 2. Checking cookie: "${cookieName}"`);
+
+  const cookieLangPref = cookies.get(cookieName);
+
   if (cookieLangPref) {
-    return findSupportedLocale(cookieLangPref.toLowerCase());
+    const lowerCookieLang = cookieLangPref.toLowerCase();
+    const supported = findSupportedLocale(lowerCookieLang);
+    console.log(`[i18n] Cookie found: "${cookieLangPref}". Resolved to: "${supported}"`);
+    return supported;
   }
-  // 3. Browser language (default)
-  // Note that some browers prefer upper case for the region part of the locale, while others don't.
-  // Thus the toLowerCase, for consistency.
-  // https://developer.mozilla.org/en-US/docs/Web/API/NavigatorLanguage/language
-  return findSupportedLocale(globalThis.navigator.language.toLowerCase());
+
+  console.log('[i18n] No language cookie found.');
+
+  const browserLang = globalThis.navigator.language;
+  console.log(`[i18n] 3. Falling back to browser language: "${browserLang}"`);
+
+  const browserLangLower = browserLang.toLowerCase();
+  const supported = findSupportedLocale(browserLangLower);
+
+  console.log(`[i18n] Final resolved locale from browser: "${supported}"`);
+  return supported;
 }
 
 /**
