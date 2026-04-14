@@ -14,5 +14,6 @@ export { default as ErrorPage } from './ErrorPage';
 export { default as LoginRedirect } from './LoginRedirect';
 export { default as NotFoundPage } from './NotFoundPage';
 export { default as PageWrap } from './PageWrap';
+export { isApiNotFound, redirectToNotFound } from './utils';
 export { useAppEvent } from './hooks';
 //# sourceMappingURL=index.js.map
