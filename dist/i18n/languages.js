@@ -20,8 +20,7 @@ import plLocale from '@cospired/i18n-iso-languages/langs/pl.json';
 import ptLocale from '@cospired/i18n-iso-languages/langs/pt.json';
 // import ruLocale from '@cospired/i18n-iso-languages/langs/ru.json';
 // import thLocale from '@cospired/i18n-iso-languages/langs/th.json';
-// import ukLocale from '@cospired/i18n-iso-languages/langs/uk.json';
-
+import ukLocale from '@cospired/i18n-iso-languages/langs/uk.json';
 import { getPrimaryLanguageSubtag } from './lib';
 
 /*
@@ -48,7 +47,7 @@ LANGUAGES.registerLocale(plLocale);
 LANGUAGES.registerLocale(ptLocale);
 // LANGUAGES.registerLocale(ruLocale);
 // LANGUAGES.registerLocale(thLocale);
-// LANGUAGES.registerLocale(ukLocale);
+LANGUAGES.registerLocale(ukLocale);
 
 /**
  * Provides a lookup table of language IDs to language names for the current locale.
@@ -58,7 +57,12 @@ LANGUAGES.registerLocale(ptLocale);
 export var getLanguageMessages = function getLanguageMessages(locale) {
   var primaryLanguageSubtag = getPrimaryLanguageSubtag(locale);
   var languageCode = languageLangs().includes(primaryLanguageSubtag) ? primaryLanguageSubtag : 'en';
-  return LANGUAGES.getNames(languageCode);
+  return Object.fromEntries(Object.entries(LANGUAGES.getNames(languageCode)).map(function (_ref) {
+    var _ref2 = _slicedToArray(_ref, 2),
+      code = _ref2[0],
+      name = _ref2[1];
+    return [code, name.charAt(0).toLocaleUpperCase(languageCode) + name.slice(1)];
+  }));
 };
 
 /**
@@ -69,21 +73,24 @@ export var getLanguageMessages = function getLanguageMessages(locale) {
  *   name // The localized name of the language
  * }
  *
- * TODO: ARCH-878: The list should be sorted alphabetically in the current locale.
+ * Ukrainian goes first, the rest are sorted alphabetically in the current locale.
  * This is useful for populating dropdowns.
  *
  * @memberof I18n
  */
 export var getLanguageList = function getLanguageList(locale) {
   var languageMessages = getLanguageMessages(locale);
-  return Object.entries(languageMessages).map(function (_ref) {
-    var _ref2 = _slicedToArray(_ref, 2),
-      code = _ref2[0],
-      name = _ref2[1];
+  var collator = new Intl.Collator(getPrimaryLanguageSubtag(locale));
+  return Object.entries(languageMessages).map(function (_ref3) {
+    var _ref4 = _slicedToArray(_ref3, 2),
+      code = _ref4[0],
+      name = _ref4[1];
     return {
       code: code,
       name: name
     };
+  }).sort(function (a, b) {
+    return (b.code === 'uk') - (a.code === 'uk') || collator.compare(a.name, b.name);
   });
 };
 //# sourceMappingURL=languages.js.map
