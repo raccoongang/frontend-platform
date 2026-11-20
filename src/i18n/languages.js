@@ -14,7 +14,7 @@ import plLocale from '@cospired/i18n-iso-languages/langs/pl.json';
 import ptLocale from '@cospired/i18n-iso-languages/langs/pt.json';
 // import ruLocale from '@cospired/i18n-iso-languages/langs/ru.json';
 // import thLocale from '@cospired/i18n-iso-languages/langs/th.json';
-// import ukLocale from '@cospired/i18n-iso-languages/langs/uk.json';
+import ukLocale from '@cospired/i18n-iso-languages/langs/uk.json';
 
 import { getPrimaryLanguageSubtag } from './lib';
 
@@ -42,7 +42,7 @@ LANGUAGES.registerLocale(plLocale);
 LANGUAGES.registerLocale(ptLocale);
 // LANGUAGES.registerLocale(ruLocale);
 // LANGUAGES.registerLocale(thLocale);
-// LANGUAGES.registerLocale(ukLocale);
+LANGUAGES.registerLocale(ukLocale);
 
 /**
  * Provides a lookup table of language IDs to language names for the current locale.
@@ -53,7 +53,12 @@ export const getLanguageMessages = (locale) => {
   const primaryLanguageSubtag = getPrimaryLanguageSubtag(locale);
   const languageCode = languageLangs().includes(primaryLanguageSubtag) ? primaryLanguageSubtag : 'en';
 
-  return LANGUAGES.getNames(languageCode);
+  return Object.fromEntries(
+    Object.entries(LANGUAGES.getNames(languageCode)).map(([code, name]) => [
+      code,
+      name.charAt(0).toLocaleUpperCase(languageCode) + name.slice(1),
+    ]),
+  );
 };
 
 /**
@@ -64,12 +69,15 @@ export const getLanguageMessages = (locale) => {
  *   name // The localized name of the language
  * }
  *
- * TODO: ARCH-878: The list should be sorted alphabetically in the current locale.
+ * Ukrainian goes first, the rest are sorted alphabetically in the current locale.
  * This is useful for populating dropdowns.
  *
  * @memberof I18n
  */
 export const getLanguageList = (locale) => {
   const languageMessages = getLanguageMessages(locale);
-  return Object.entries(languageMessages).map(([code, name]) => ({ code, name }));
+  const collator = new Intl.Collator(getPrimaryLanguageSubtag(locale));
+  return Object.entries(languageMessages)
+    .map(([code, name]) => ({ code, name }))
+    .sort((a, b) => (b.code === 'uk') - (a.code === 'uk') || collator.compare(a.name, b.name));
 };
